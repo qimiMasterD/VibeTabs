@@ -1,227 +1,102 @@
-Popzy.elements = [];
-
-function Popzy(options) {
+function VibeTabs(selector, options) {
     const defaults = {
-        closeMethods: ["overlay", "button", "escape"],
-        scrollLockTarget: () => document.body,
-        enableScrollLock: true,
-        destroyOnClose: true,
-        cssClasses: [],
-        footer: false,
+        activeTabClass: "VibeTabs--active",
+        remember: false,
     };
     Object.assign(this, defaults, options);
 
-    if (!this.templateId && !this.content) {
-        console.error(`At least 'content' or 'templateId' must be provided!`);
+    this.tabParent = document.querySelector(selector);
+    if (!this.tabParent) {
+        console.error(`VibeTabs: No container found for selector ${selector}`);
         return;
     }
-    if (this.templateId && this.content) {
-        this.templateId = null;
-        console.warn(
-            "Both content and templateId are specified, now content will take precedence, and templateId will be ignored.",
-        );
+    this.originalHTML = this.tabParent.innerHTML;
+
+    this.tabChilds = this.tabParent.children;
+
+    if (this.tabChilds.length === 0) {
+        console.error("VibeTabs: No tabs found inside the parent container");
+        return;
     }
-    if (this.templateId) {
-        this.template = document.querySelector(`#${this.templateId}`);
-        if (!this.template) {
-            console.error(`Template with ${this.templateId} does not exists`);
+
+    this.activeTabIndex = 0;
+    this.tabTargets = [];
+    this.panels = [];
+    for (let i = 0; i < this.tabChilds.length; i++) {
+        if (this.tabChilds[i].classList.contains(this.activeTabClass))
+            this.activeTabIndex = i;
+        const aTag = this.tabChilds[i].querySelector("a");
+        const target = aTag.getAttribute("href");
+        aTag.onclick = (event) => this._handleTabClick(event, target);
+        aTag.addEventListener("click", () => {
+            this.switch(target);
+        });
+        const panel = document.querySelector(target);
+        if (!panel) {
+            console.error(`VibeTabs: No panel found for selector ${target}`);
+            return;
+        }
+        this.panels.push(panel);
+        this.tabTargets.push(target);
+    }
+
+    const savedTabIndex = location.hash;
+    if (this.remember && savedTabIndex)
+        this.activeTabIndex = this.tabTargets.indexOf(savedTabIndex);
+    if (this.activeTabIndex === -1) this.activeTabIndex = 0;
+    this.switch(this.tabTargets[this.activeTabIndex]);
+}
+
+// Open and close tab with index
+VibeTabs.prototype._setTab = function (index) {
+    this.tabChilds[index].classList.add(this.activeTabClass);
+    this.panels[index].classList.remove("VibeTabs--hidden");
+};
+
+VibeTabs.prototype._removeTab = function (index) {
+    this.tabChilds[index].classList.remove(this.activeTabClass);
+    this.panels[index].classList.add("VibeTabs--hidden");
+};
+
+VibeTabs.prototype._handleTabClick = function (event, selector) {
+    event.preventDefault();
+    this.switch(selector);
+};
+
+// switch a tab with the 'selector' provided
+VibeTabs.prototype.switch = function (input) {
+    let idx;
+    if (typeof input !== "string") {
+        idx = Array.from(this.tabChilds).findIndex((element) => {
+            return element === input.closest("li");
+        });
+        if (idx === -1) {
+            console.error(
+                `VibeTabs: Cannot switch because element does not exists`,
+            );
+            return;
+        }
+    } else {
+        idx = this.tabTargets.indexOf(input);
+        if (idx === -1) {
+            console.error(
+                `VibeTabs: Cannot switch because tab with ${input} does not exists`,
+            );
             return;
         }
     }
-
-    this._allowButtonClose = this.closeMethods.includes("button");
-    this._allowBackdropClose = this.closeMethods.includes("overlay");
-    this._allowEscapeClose = this.closeMethods.includes("escape");
-    this._pendingFooterBtns = [];
-    this._modalContent;
-    this._backdrop;
-
-    // binding
-    this._closeByESC = this._closeByESC.bind(this);
-}
-
-// utility functions
-Popzy.prototype._getScrollbarWidth = function () {
-    if (this._scrollbarWidth) return this._scrollbarWidth;
-    const box = document.createElement("div");
-    Object.assign(box.style, {
-        position: "fixed",
-        overflow: "scroll",
-        top: -2000,
-        left: -2000,
-    });
-    document.body.appendChild(box);
-    this._scrollbarWidth = box.offsetWidth - box.clientWidth;
-    document.body.removeChild(box);
-    return this._scrollbarWidth;
+    for (let i = 0; i < this.tabChilds.length; i++)
+        if (i === idx) this._setTab(i);
+        else this._removeTab(i);
+    this.activeTabIndex = idx;
+    if (this.remember) history.replaceState(null, null, this.tabTargets[idx]);
 };
 
-Popzy.prototype._closeByESC = function (event) {
-    if (event.key === "Escape" && Popzy.elements.at(-1) === this) this.close();
-};
-
-Popzy.prototype._createButton = function (content, cssClasses, callBack) {
-    const btn = document.createElement("button");
-    btn.className = cssClasses;
-    btn.innerHTML = content;
-    btn.onclick = callBack;
-    return btn;
-};
-
-Popzy.prototype._renderFooterContent = function () {
-    if (this._footerContent)
-        this._footerContainer.innerHTML = this._footerContent;
-};
-
-Popzy.prototype._renderFooterButtons = function () {
-    if (this._footerContainer) {
-        this._pendingFooterBtns.forEach((btn) => {
-            this._footerContainer.appendChild(btn);
-        });
-    }
-};
-
-Popzy.prototype.setContent = function (content) {
-    this.content = content;
-    this._modalContent.innerHTML = content;
-};
-
-Popzy.prototype._build = function () {
-    // load elements
-    let backdrop = document.createElement("div");
-    this._backdrop = backdrop;
-    backdrop.classList.add("popzy__backdrop");
-
-    const container = document.createElement("div");
-    container.classList.add("popzy__container");
-
-    this._modalContent = document.createElement("div");
-    this._modalContent.classList.add("popzy__content");
-    let content;
-    if (this.content) content = this.content;
-    else if (this.templateId) content = this.template.content.cloneNode(true);
-    this._modalContent.innerHTML = content;
-    container.appendChild(this._modalContent);
-
-    // add to DOM
-    backdrop.appendChild(container);
-    document.body.appendChild(backdrop);
-
-    // add footer buttons
-    if (this.footer) {
-        this._footerContainer = document.createElement("div");
-        this._footerContainer.classList.add("popzy__footer");
-        this._renderFooterContent();
-        container.appendChild(this._footerContainer);
-
-        this._renderFooterButtons();
-    }
-
-    // add css classes
-    this.cssClasses.forEach((className) => {
-        if (typeof className === "string") container.classList.add(className);
-    });
-
-    // touch the overlay to close modal
-    if (this._allowBackdropClose) {
-        backdrop.addEventListener("click", (event) => {
-            if (event.target === backdrop) this.close();
-        });
-    }
-
-    // press ESC to close modal
-    if (this._allowEscapeClose) {
-        document.addEventListener("keydown", this._closeByESC);
-    }
-
-    // btnClose feature to close modal
-    if (this._allowButtonClose) {
-        const btnClose = this._createButton(`x`, "popzy__close", () => {
-            this.close();
-        });
-        container.appendChild(btnClose);
-    }
-};
-
-Popzy.prototype.addFooterButton = function (content, cssClasses, callBack) {
-    const btn = this._createButton(content, cssClasses, callBack);
-    this._pendingFooterBtns.push(btn);
-
-    this._renderFooterButtons();
-};
-
-Popzy.prototype.setFooterContent = function (html) {
-    this._footerContent = html;
-    this._renderFooterContent();
-};
-
-Popzy.prototype._hasScrollBar = function (element) {
-    if (element === document.body || element === document.documentElement) {
-        return document.documentElement.scrollHeight > window.innerHeight;
-    }
-    return element.scrollHeight > element.clientHeight;
-};
-
-Popzy.prototype.open = function () {
-    Popzy.elements.push(this);
-
-    // cases to create new modal
-    if (!this._backdrop) {
-        this._build();
-    }
-
-    // handle scroll lock
-    if (this.enableScrollLock) {
-        const target = this.scrollLockTarget();
-        target.classList.add("popzy--no-scroll");
-        const targetPaddingRight = parseInt(
-            getComputedStyle(target).paddingRight,
-        );
-        if (this._hasScrollBar(target))
-            target.style.paddingRight = `${this._getScrollbarWidth() + targetPaddingRight}px`;
-    }
-
-    // function to call when modal is opened
-    this._onTransitionEnd(() => {
-        if (typeof this.onOpen === "function") this.onOpen();
-    });
-
-    // show the modal
-    setTimeout(() => {
-        this._backdrop.classList.add("popzy--show");
-    }, 0);
-};
-
-Popzy.prototype._onTransitionEnd = function (callBack) {
-    this._backdrop.ontransitionend = (event) => {
-        if (event.propertyName !== "scale") return;
-        if (typeof callBack === "function") callBack();
-    };
-};
-
-Popzy.prototype.close = function (destroy = this.destroyOnClose) {
-    Popzy.elements.pop();
-
-    this._backdrop.classList.remove("popzy--show");
-
-    this._onTransitionEnd(() => {
-        if (destroy && this._backdrop) {
-            this._backdrop.remove();
-            this._backdrop = null;
-        }
-
-        if (typeof this.onClose === "function") this.onClose();
-    });
-
-    document.removeEventListener("keydown", this._closeByESC);
-
-    if (!Popzy.elements.length && this.enableScrollLock) {
-        const target = this.scrollLockTarget();
-        target.classList.remove("popzy--no-scroll");
-        target.style.paddingRight = "";
-    }
-};
-
-Popzy.prototype.destroy = function () {
-    this.close(true);
+VibeTabs.prototype.destroy = function () {
+    this.tabParent.innerHTML = this.originalHTML;
+    for (let panel of this.panels) panel.classList.remove("VibeTabs--hidden");
+    this.tabParent = null;
+    this.tabChilds = null;
+    this.tabTargets = null;
+    this.panels = null;
 };
