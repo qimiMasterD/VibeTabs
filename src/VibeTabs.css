@@ -1,0 +1,75 @@
+.popzy__btn {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: 600;
+}
+
+.popzy__backdrop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+}
+
+.popzy__container {
+    position: relative;
+    padding: 30px 20px;
+    border-radius: 20px;
+    background-color: white;
+    scale: 0;
+    transition: scale 0.3s ease;
+}
+
+.popzy--show {
+    opacity: 1;
+    visibility: visible;
+}
+.popzy--show .popzy__container {
+    scale: 1;
+}
+
+.popzy__content {
+    max-height: 70vh;
+    max-width: 50vw;
+    overflow-y: auto;
+}
+
+.popzy__close {
+    border: none;
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ccc;
+    border-radius: 50%;
+    padding: 8px;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+body {
+    padding-right: 20px;
+}
+
+.popzy__footer {
+    display: flex;
+    padding-top: 10px;
+    margin-bottom: -20px;
+    gap: 10px;
+}
+
+.popzy--no-scroll {
+    overflow: hidden;
+}

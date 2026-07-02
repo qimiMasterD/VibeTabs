@@ -1,0 +1,9 @@
+{
+    "scripts": {
+        "minify": "terser src/VibeTabs.js -o VibeTabs.min.js && csso src/VibeTabs.css -o VibeTabs.min.css"
+    },
+    "dependencies": {
+        "csso-cli": "^4.0.2",
+        "terser": "^5.48.0"
+    }
+}
