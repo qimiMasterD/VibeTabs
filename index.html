@@ -17,9 +17,26 @@
         <div id="tab2">Tab2 content</div>
         <div id="tab3">Tab3 content</div>
 
+        <ul id="anotherTabs">
+            <li><a href="#anotherTab1">anotherTab 1</a></li>
+            <li><a href="#anotherTab2">anotherTab 2</a></li>
+            <li><a href="#anotherTab3">anotherTab 3</a></li>
+        </ul>
+        <div id="anotherTab1">anotherTab1 content</div>
+        <div id="anotherTab2">anotherTab2 content</div>
+        <div id="anotherTab3">anotherTab3 content</div>
+
         <script src="./src/VibeTabs.js"></script>
         <script>
-            const tab = new VibeTabs("#tabs", { remember: true });
+            const tab = new VibeTabs("#tabs", {
+                remember: true,
+                onChange: (data) => {
+                    console.log(data);
+                },
+            });
+            const anotherTabs = new VibeTabs("#anotherTabs", {
+                remember: true,
+            });
         </script>
     </body>
 </html>
