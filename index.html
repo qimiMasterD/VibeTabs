@@ -3,40 +3,397 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>VibeTabs.js — Clean, State-Aware Navigation Tab Switcher</title>
+
+        <!-- Favicon -->
+        <link
+            rel="icon"
+            type="image/png"
+            href="/favicon-96x96.png"
+            sizes="96x96"
+        />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
+        <meta name="apple-mobile-web-app-title" content="VibeTabs" />
+        <link rel="manifest" href="/site.webmanifest" />
 
         <link rel="stylesheet" href="./src/VibeTabs.css" />
+        <link rel="stylesheet" href="./assets/style.css" />
     </head>
     <body>
-        <ul id="tabs">
-            <li><a href="#tab1">Tab 1</a></li>
-            <li><a href="#tab2">Tab 2</a></li>
-            <li><a href="#tab3">Tab 3</a></li>
-        </ul>
-        <div id="tab1">Tab1 content</div>
-        <div id="tab2">Tab2 content</div>
-        <div id="tab3">Tab3 content</div>
+        <div class="showcase-container">
+            <header>
+                <h1>VibeTabs.js</h1>
+                <p>
+                    A lightweight, client-side, query-state remembering
+                    navigation component system.
+                </p>
 
-        <ul id="anotherTabs">
-            <li><a href="#anotherTab1">anotherTab 1</a></li>
-            <li><a href="#anotherTab2">anotherTab 2</a></li>
-            <li><a href="#anotherTab3">anotherTab 3</a></li>
-        </ul>
-        <div id="anotherTab1">anotherTab1 content</div>
-        <div id="anotherTab2">anotherTab2 content</div>
-        <div id="anotherTab3">anotherTab3 content</div>
+                <div class="download-zone" style="justify-content: center">
+                    <a
+                        href="https://github.com/qimiMasterD/VibeTabs/archive/refs/heads/main.zip"
+                        class="btn btn--primary"
+                        >💾 Download Production ZIP</a
+                    >
+                    <a href="#installation" class="btn btn--secondary"
+                        >🌐 View CDN Options</a
+                    >
+                </div>
+            </header>
+
+            <section class="demo-card">
+                <h2>Demo 1: Vertical Layout (Theme: Deep Blue)</h2>
+                <p
+                    style="
+                        color: #64748b;
+                        margin-bottom: 1rem;
+                        font-size: 0.9rem;
+                    "
+                >
+                    💡 <strong>Feature Focus:</strong> State preservation
+                    active. Toggle tabs and click refresh. The address parameter
+                    key matches your container selector string
+                    <code>?demo1=tab...</code>.
+                </p>
+
+                <div class="vertical-layout">
+                    <ul id="demo1">
+                        <li><a href="#tab1">Analytics Dashboard</a></li>
+                        <li><a href="#tab2">System Settings</a></li>
+                        <li><a href="#tab3">Access Control</a></li>
+                    </ul>
+
+                    <div style="flex-grow: 1">
+                        <div id="tab1" class="tab-content">
+                            <h3>Analytics Dashboard</h3>
+                            <p>
+                                Track performance metrics and visualize stateful
+                                interactions seamlessly.
+                            </p>
+                        </div>
+                        <div id="tab2" class="tab-content">
+                            <h3>System Settings</h3>
+                            <p>
+                                Configure regional system defaults and
+                                operational variables.
+                            </p>
+                        </div>
+                        <div id="tab3" class="tab-content">
+                            <h3>Access Control</h3>
+                            <p>
+                                Establish administrative token parameters and
+                                cryptographic assertions safely.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="demo-card">
+                <h2>Demo 2: Horizontal Layout (Theme: Emerald &amp; Hooks)</h2>
+                <p
+                    style="
+                        color: #64748b;
+                        margin-bottom: 1rem;
+                        font-size: 0.9rem;
+                    "
+                >
+                    💡 <strong>Feature Focus:</strong> This instance executes an
+                    active <code>onChange</code> callback lifecycle
+                    notification. Change tabs below to view the structural
+                    callback stream logs.
+                </p>
+
+                <ul id="demo2">
+                    <li><a href="#anotherTab1">Overview</a></li>
+                    <li><a href="#anotherTab2">Integrations</a></li>
+                    <li><a href="#anotherTab3">Changelog</a></li>
+                </ul>
+
+                <div>
+                    <div id="anotherTab1" class="tab-content">
+                        <h3>Project Overview</h3>
+                        <p>
+                            Clean query param management prevents tab resetting
+                            during client page shifts.
+                        </p>
+                    </div>
+                    <div id="anotherTab2" class="tab-content">
+                        <h3>Integrations</h3>
+                        <p>
+                            Designed to easily drop into standard plain layouts
+                            or modular static code structures.
+                        </p>
+                    </div>
+                    <div id="anotherTab3" class="tab-content">
+                        <h3>Changelog (v1.0)</h3>
+                        <p>
+                            Safe string cleaning engine checks URL structures
+                            dynamically without crashing.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="callback-toast" class="toast-log"></div>
+            </section>
+
+            <section class="demo-card">
+                <h2>Demo 3: Sliding Tab (Theme: Cardinal Red)</h2>
+                <p
+                    style="
+                        color: #64748b;
+                        margin-bottom: 1rem;
+                        font-size: 0.9rem;
+                    "
+                >
+                    💡 <strong>Feature Focus:</strong> Sliding Tabs provide a
+                    smooth animated switch between panels while preserving the
+                    active state.
+                </p>
+
+                <div class="VibeTabs-wrapper">
+                    <ul id="demo3" class="sliding">
+                        <li><a href="#transitionTab1">Dashboard</a></li>
+                        <li><a href="#transitionTab2">Analytics</a></li>
+                        <li><a href="#transitionTab3">Settings</a></li>
+                    </ul>
+                    <div class="active-line"></div>
+                </div>
+
+                <div>
+                    <div id="transitionTab1" class="tab-content">
+                        <h3>Dashboard</h3>
+                        <p>
+                            View your latest activity, quick summaries, and
+                            important notifications from a single centralized
+                            panel.
+                        </p>
+                    </div>
+                    <div id="transitionTab2" class="tab-content">
+                        <h3>Analytics</h3>
+                        <p>
+                            Explore performance trends with interactive charts
+                            and detailed statistics collected over time.
+                        </p>
+                    </div>
+                    <div id="transitionTab3" class="tab-content">
+                        <h3>Settings</h3>
+                        <p>
+                            Customize preferences, configure application
+                            behavior, and manage your account options with ease.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="callback-toast" class="toast-log"></div>
+            </section>
+
+            <section class="demo-card" id="features">
+                <h2>Library Feature Matrix</h2>
+                <ul>
+                    <li>
+                        ⚡ <strong>Zero Dependencies:</strong> Built completely
+                        using raw, native ECMAScript prototypes.
+                    </li>
+                    <li>
+                        🔗
+                        <strong>Browser State Persistence:</strong> Serializes
+                        UI configuration strings into clean URL search
+                        parameters seamlessly.
+                    </li>
+                    <li>
+                        🧽
+                        <strong>Robust Alpha-Numeric Cleaning Engine:</strong>
+                        Built-in string parser ensures IDs containing standard
+                        hash symbols safely bind to keys in compliance with the
+                        URL Living Standard.
+                    </li>
+                    <li>
+                        ♻️ <strong>Graceful Teardown:</strong> Built-in
+                        <code>.destroy()</code> restores previous elements
+                        instantly to prevent memory leaks.
+                    </li>
+                </ul>
+            </section>
+
+            <section class="demo-card" id="installation">
+                <h2>Installation Options</h2>
+
+                <h3>Option A: Production Asset Bundle (Local Download)</h3>
+                <p>
+                    Download the compressed archive containing production source
+                    layers and include them directly:
+                </p>
+                <div class="download-zone">
+                    <a href="./vibetabs-v1.0.0.zip" class="btn btn--primary"
+                        >💾 Download VibeTabs Bundle (.ZIP)</a
+                    >
+                </div>
+                <pre><code>&lt;!-- Reference local distribution stylesheets and scripts --&gt;
+&lt;link rel="stylesheet" href="./src/VibeTabs.css" /&gt;
+&lt;script src="./src/VibeTabs.js"&gt;&lt;/script&gt;</code></pre>
+
+                <h3 style="margin-top: 1.5rem">
+                    Option B: High-Performance Global CDN
+                </h3>
+                <p>
+                    Reference pre-compiled asset drops directly over content
+                    delivery network pipelines:
+                </p>
+                <pre><code>&lt;!-- Content Delivery Network Assets --&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yourusername/vibetabs@1.0.0/src/VibeTabs.css" /&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/yourusername/vibetabs@1.0.0/src/VibeTabs.js"&gt;&lt;/script&gt;</code></pre>
+            </section>
+
+            <section class="demo-card" id="options">
+                <h2>Initialization Options Dictionary</h2>
+                <p>
+                    Pass these options to the second argument of the
+                    <code>new VibeTabs()</code> constructor:
+                </p>
+
+                <div class="docs-grid">
+                    <div
+                        style="
+                            background: #f8fafc;
+                            padding: 1rem;
+                            border-radius: 8px;
+                        "
+                    >
+                        <h4>activeTabClass</h4>
+                        <span class="badge badge--type">String</span>
+                        <span class="badge badge--default"
+                            >Default: "VibeTabs--active"</span
+                        >
+                        <p
+                            style="
+                                font-size: 0.85rem;
+                                margin-top: 0.5rem;
+                                color: #475569;
+                            "
+                        >
+                            The exact CSS class toggled onto the active
+                            <code>&lt;li&gt;</code> element wrapper container
+                            when selected.
+                        </p>
+                    </div>
+
+                    <div
+                        style="
+                            background: #f8fafc;
+                            padding: 1rem;
+                            border-radius: 8px;
+                        "
+                    >
+                        <h4>remember</h4>
+                        <span class="badge badge--type">Boolean</span>
+                        <span class="badge badge--default">Default: false</span>
+                        <p
+                            style="
+                                font-size: 0.85rem;
+                                margin-top: 0.5rem;
+                                color: #475569;
+                            "
+                        >
+                            When explicitly configured to <code>true</code>, tab
+                            tracking keys are pushed straight into the browser
+                            query history stack.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    style="
+                        background: #f8fafc;
+                        padding: 1rem;
+                        border-radius: 8px;
+                        margin-top: 1rem;
+                    "
+                >
+                    <h4>onChange</h4>
+                    <span class="badge badge--type">Function | null</span>
+                    <span class="badge badge--default">Default: null</span>
+                    <p
+                        style="
+                            font-size: 0.85rem;
+                            margin-top: 0.5rem;
+                            color: #475569;
+                        "
+                    >
+                        Lifecycle tracking hook executed during navigation state
+                        shifts. Exposes an event object containing contextual
+                        elements:
+                    </p>
+                    <pre><code>onChange: function(event) {
+    console.log(event.tab);   // Target &lt;a&gt; anchor trigger element
+    console.log(event.panel); // Coinciding HTML content wrapper panel
+}</code></pre>
+                </div>
+            </section>
+
+            <section class="demo-card" id="api">
+                <h2>Public API Method Reference</h2>
+
+                <div class="method-card">
+                    <h4><code>.switch(input, updateURL = true)</code></h4>
+                    <p style="font-size: 0.9rem; color: #475569">
+                        Triggers a manual component navigation state switch.
+                        Accepts either a string targeting an element ID hash or
+                        a direct reference to a sub-child element trigger node.
+                    </p>
+                </div>
+
+                <div class="method-card" style="border-left-color: #ef4444">
+                    <h4><code>.destroy()</code></h4>
+                    <p style="font-size: 0.9rem; color: #475569">
+                        Completely tears down the active module instance.
+                        Restores original inner HTML markup contexts, clears
+                        visibility restriction styles, and breaks internal
+                        memory storage references cleanly.
+                    </p>
+                </div>
+            </section>
+        </div>
 
         <script src="./src/VibeTabs.js"></script>
         <script>
-            const tab = new VibeTabs("#tabs", {
+            // Instance Alpha: Deep Blue Vertical Navigation Deck
+            const tab = new VibeTabs("#demo1", {
                 remember: true,
-                onChange: (data) => {
-                    console.log(data);
+                activeTabClass: "demo1--active",
+            });
+
+            // Instance Beta: Horizontal Navigation Deck running onChange interceptor logic
+            const anotherTabs = new VibeTabs("#demo2", {
+                remember: true,
+                activeTabClass: "demo2--active",
+                onChange: function (event) {
+                    const logWindow = document.getElementById("callback-toast");
+                    logWindow.style.display = "block";
+                    logWindow.innerHTML = `🛠️ <strong>onChange fired:</strong> Switched to anchor <code>${event.tab.getAttribute("href")}</code>`;
                 },
             });
-            const anotherTabs = new VibeTabs("#anotherTabs", {
+
+            // Tabs with smooth transition
+            function slideTab(event) {
+                let index = this.panels.indexOf(event.panel);
+                let activeLine = document.querySelector(
+                    "#demo3 + .active-line",
+                );
+                activeLine.style.width = `${this.tabChilds[index].offsetWidth}px`;
+                activeLine.style.transform = `translateX(${this.tabChilds[index].offsetLeft}px)`;
+            }
+            const tab3 = new VibeTabs("#demo3", {
                 remember: true,
+                activeTabClass: "demo3--active",
+                onChange: slideTab,
             });
+            slideTab.call(tab3, { panel: tab3.panels[tab3.activeTabIndex] });
         </script>
     </body>
 </html>

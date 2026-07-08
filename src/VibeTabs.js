@@ -49,7 +49,7 @@ function VibeTabs(selector, options) {
             return this._removeCharacters(element) === savedTabIndex;
         });
     if (this.activeTabIndex === -1) this.activeTabIndex = 0;
-    this.switch(this.tabTargets[this.activeTabIndex]);
+    this.switch(this.tabTargets[this.activeTabIndex], false);
 }
 
 // Remove insufficient characters
@@ -76,7 +76,7 @@ VibeTabs.prototype._setParameters = function (key, value) {
 };
 
 // switch a tab with the 'selector' provided
-VibeTabs.prototype.switch = function (input) {
+VibeTabs.prototype.switch = function (input, updateURL = true) {
     let idx;
     if (typeof input !== "string") {
         idx = Array.from(this.tabChilds).findIndex((element) => {
@@ -97,10 +97,11 @@ VibeTabs.prototype.switch = function (input) {
         if (i === idx) this._setTab(i);
         else this._removeTab(i);
     this.activeTabIndex = idx;
-    this._setParameters(
-        this.selector,
-        this._removeCharacters(this.tabTargets[idx]),
-    );
+    if (updateURL)
+        this._setParameters(
+            this.selector,
+            this._removeCharacters(this.tabTargets[idx]),
+        );
 };
 
 VibeTabs.prototype.destroy = function () {
